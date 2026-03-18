@@ -1,0 +1,39 @@
+// @ts-check
+import { defineConfig } from 'astro/config';
+import starlight from '@astrojs/starlight';
+
+// math support
+import remarkMath from 'remark-math';
+import remarkPreserveMeta from './src/plugins/remark-preserve-meta/remarkPreserveMeta';
+import rehypeMath from './src/plugins/rehype-math/rehypeMath';
+
+// https://astro.build/config
+export default defineConfig({
+	integrations: [
+		starlight({
+			title: 'My Docs',
+			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/withastro/starlight' }],
+			sidebar: [
+				{
+					label: 'Math',
+					items: [
+						// Each item here is one entry in the navigation menu.
+						{ label: 'Example Guide', slug: 'math/example' },
+					],
+				},
+				{
+					label: 'This documentation',
+					autogenerate: { directory: 'doc-reference' },
+				},
+			],
+		}),
+	],
+
+	markdown: {
+		remarkPlugins: [
+			remarkMath,
+			remarkPreserveMeta
+		],
+		rehypePlugins: [rehypeMath],
+	}
+});
