@@ -1,0 +1,44 @@
+---
+title: Writing problems
+description: How to write math problems in this documentation
+---
+
+import Solution from '/src/components/Solution.astro';
+
+To include a math problem, use simple markdown headings for the problem title/number and simple markdown for problem text/solution. If you want foldable problem solutions, you can make the file `.mdx` and use the `<Solution>` component. The `<Solution>` component generates a foldable section with solution. By default, the solution section prompt will say 'Show solution' when the solution is closed (it is closed by default) and 'Hide solution' when the solution is open. You can override the prompt values with `promptShow` and `promptHide` attributes of `<Solution`>. The following `.mdx` markdown:
+
+```markdown
+### Problem: quadratic equations
+
+Solve: $ x^2 - 5x + 6 = 0 $
+
+<Solution promptShow = 'Show solution to quadratic equation' promptHide = 'Hide solution to quadratic equation'>
+
+$$ nl, justify = left
+D = b^2 - 4ac = 25 - 24 = 1
+x_(1,2) = (-b +- sqrt(D))/(2a) = (5 +- sqrt(1))/2
+x = {3, 2}
+$$
+
+</Solution>
+```
+
+... will render as follows:
+
+### Problem: quadratic equations
+
+Solve: $ x^2 - 5x + 6 = 0 $
+
+<Solution promptShow = 'Show solution to quadratic equation' promptHide = 'Hide solution to quadratic equation'>
+
+$$ nl, justify = left
+D = b^2 - 4ac = 25 - 24 = 1
+x_(1,2) = (-b +- sqrt(D))/(2a) = (5 +- sqrt(1))/2
+x = [3, 2]
+$$
+
+</Solution>
+
+## Notes
+
+Note that the problem will be included in the page ToC automatically due to the use of headings (`##` or `###`). The solution component can of course include any nested components, for example, graphs.

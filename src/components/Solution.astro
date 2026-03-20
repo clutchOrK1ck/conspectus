@@ -1,0 +1,29 @@
+---
+const {
+  promptShow = 'Show solution',
+  promptHide = 'Hide solution',
+} = Astro.props;
+---
+
+<details>
+  <summary>
+    <span class="when-closed">{promptShow}</span>
+    <span class="when-open">{promptHide}</span>
+  </summary>
+
+  <slot />
+</details>
+
+<style>
+  .when-open {
+    display: none;
+  }
+
+  details[open] .when-closed {
+    display: none;
+  }
+
+  details[open] .when-open {
+    display: inline;
+  }
+</style>
