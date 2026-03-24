@@ -16,10 +16,7 @@ export default defineConfig({
 			sidebar: [
 				{
 					label: 'Math',
-					items: [
-						// Each item here is one entry in the navigation menu.
-						{ label: 'Example Guide', slug: 'math/example' },
-					],
+					autogenerate: { directory: 'math' },
 				},
 				{
 					label: 'This documentation',
