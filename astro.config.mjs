@@ -12,6 +12,14 @@ export default defineConfig({
 	integrations: [
 		starlight({
 			title: 'My Docs',
+			head: [
+				{
+					tag: 'script',
+					attrs: {
+						src: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/latest.js?config=AM_CHTML',
+					}
+				}
+			],
 			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/withastro/starlight' }],
 			sidebar: [
 				{

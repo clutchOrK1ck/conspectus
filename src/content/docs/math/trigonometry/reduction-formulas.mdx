@@ -1,0 +1,82 @@
+---
+title: Reduction formulas
+---
+
+import { Steps } from '@astrojs/starlight/components';
+
+Reduction formulas are used to simplify trigonometric functions of argument of the form $ alpha + x $, for example:
+
+$$overflow = scroll, width = null
+    sin(alpha + (17 pi)/3) = -cos(alpha + pi/6)
+$$
+
+## General algorithm
+
+General algorithm can be applied to $sin, cos, tan, cot$ of argument of the form $ alpha +- x $:
+
+<Steps>
+
+1. Due to periodicity, ignore $ 2 pi n, n in Z $ in case of $ sin, cos $ and $ pi n, n in Z $ in case of $ tan, cot $:
+
+    $$nl
+        sin(alpha + 2 pi n + x) = sin(alpha + x), forall n in Z
+        tan(alpha + pi n + x) = tan(alpha + x), forall n in Z
+    $$
+
+2. If, in $ f(alpha + x) $,  $ x > pi/2 $, rewrite $ x $ as 
+
+    $$ 
+    (pi/2)n + y,\ n in Z,\ y < pi/2 
+    $$
+
+    for example:
+
+    $$
+        sin(alpha + (5pi)/3) = sin(alpha + (3pi)/2 + pi/6)
+    $$
+
+3. Using the trig unit circle, define the sign ($+-$) of the initial function: it will be the sign of the result
+
+4. If, after step 2, the argument is of the form $ alpha + (3pi)/2 $ or $ alpha + pi/2 $, then the resulting function will be co-function of the initial function, in other words:
+
+    $$
+        sin(alpha + (3pi)/2) = -cos(alpha)
+    $$
+    
+    If $ beta = pi +- alpha $ then the resulting function does not change, in other words:
+
+    $$
+        sin(alpha + pi) = -sin(alpha)
+    $$
+</Steps>
+
+## Using argument shifts and periodicity
+
+Trigonometric formulas can be successfully simplified without memorizing the above algorithm if the following principles are understood:
+
+### Redundancy due to periodicity
+
+Since $ sin, cos $ are periodic in $ 2pi $ and $ tan, cot $ are periodic in $ pi $,
+
+$$nl
+    sin(alpha + 2 pi n) = sin(alpha), forall n in Z
+    cos(alpha + 2 pi n) = cos(alpha), forall n in Z
+    tan(alpha + pi n) = tan(alpha), forall n in Z
+    cot(alpha + pi n) = cot(alpha), forall n in Z
+$$
+
+### \` tan, cot \` of \` alpha +- pi/2 \`
+
+$$
+    tan(alpha +- pi/2) = -cot(alpha)
+$$
+
+$$
+    cot(alpha +- pi/2) = -tan(alpha)
+$$
+
+### \` sin, cos \` of \` alpha +- pi \`
+
+### \` sin, cos \` of \` alpha +- pi/2 \`
+
+

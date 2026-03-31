@@ -2,9 +2,11 @@
 title: Trigonometric equations
 ---
 
+import Solution from '/src/components/Solution.astro';
+
 ## Elementary trigonometric equations
 
-### Sine of x
+### \` sin(x) \`
 
 The equation $ sin x = a $ has solutions if $ a in [-1; 1] $
 
@@ -22,7 +24,7 @@ $$
 | $ 1 $ | $ pi/2 + 2 pi n,\ n in Z $ |
 | $ -1 $ | $ pi/2 + 2 pi n,\ n in Z $ |
 
-### Cosine of x
+### \` cos(x) \`
 
 The equation $ cos x = a $ has solutions if $ a in [-1; 1] $
 
@@ -44,4 +46,194 @@ $$
 
 ### Variable substitution
 
-Trigonometric equations can be reduced to algebraic equations through variable substitution. 
+Trigonometric equations can be reduced to algebraic equations through variable substitution. For example, the equation $ 4 cos^2 2x + 16 sin 2x - 11 = 0 $ is reduced to a plain quadratic equation by rearranging and substituing $ sin2x -> t $
+
+#### Example
+
+Solve trigonometric equation: 
+
+$$ 
+4 cos^2 2x + 16 sin 2x - 11 = 0 
+$$
+
+<Solution>
+
+$$nl
+    4(1 - sin^2 2x) + 16 sin 2x - 11 = 0
+    4 - 4 sin^2 2x + 16 sin 2x - 11 = 0
+$$
+
+Perform substitution:  $ sin2x -> t $, where $ |t| <= 1 $
+
+$$nl
+    -4 t^2 + 16 t - 7 = 0
+    4t^2 - 16t + 7 = 0
+    t_(1,2) = [\{:(7/2),(1/2):} " where " 7/2 " does not satisfy " |t| <= 1
+$$
+
+Substitute back: $ sin 2x -> 1/2 $
+
+$$nl
+    2x = {(arcsin (1/2) + 2 pi n), (pi - arcsin (1/2) + 2 pi n):},\ n in Z
+    x = {(pi/12 + pi n), ((5pi)/12 + pi n):},\ n in Z
+$$
+</Solution>
+
+#### Example
+
+Solve equation:
+
+$$
+    2 tan x + 3 cot x = 5
+$$
+
+<Solution>
+Domain: $ x != 0 + pi n, x != pi/2 + pn, n in Z $
+
+$$nl
+    cot x -> 1 / (tan x)
+    2 tan x + 3 / (tan x) = 5
+    (2 tan^2 x - 5 tan x + 3)/(tan x) = 0
+$$
+
+Note that $ tan x != 0 => x != 0 $ is already covered by the domain of $ x $
+
+$$nl
+    2 tan^2 x - 5 tan x + 3 = 0
+    tan x -> u
+    2 u^2 - 5 u + 3 = 0
+    u_(1,2) = [{:(3/2),(1):}
+$$
+
+Then, substituting back:
+
+$$nl
+    [{:(tan x = 3/2), (tan x = 1):}
+    x = [{:(arctan (3/2) + pi n), (arctan 1 + pi n):}, n in Z
+    x = [{:(arctan (3/2) + pi n), (pi/4 + pi n):}, n in Z
+$$
+</Solution>
+
+### Reducing to \` f(x)*g(x) = 0 \`
+
+If possible to rewrite as $ f(x) * g(x) = 0 $, then it follows that $ f(x) = 0 $ and/or $ g(x) = 0 $. Both equations are then solved separately.
+
+#### Example
+
+Solve:
+
+$$
+    sin x tan x - sin x = 1 - tan x
+$$
+
+<Solution>
+
+$$nl
+    sin x (tan x - 1) = - (tan x - 1)
+    (tan x - 1) (sin x + 1) = 0
+$$
+
+Domain: $ x != pi / 2 + pi k, k in Z $ because of $ tan(x) $
+
+Then,
+
+$$nl
+    tan x = 1
+    x = arctan 1 + pi n, n in Z
+    x = pi / 4 + pi n, n in Z
+$$
+
+and
+
+$$nl
+    sin x = -1
+    x = pi / 2 + 2 pi n, n in Z
+$$
+
+...which is not in the set of permissible values.
+
+Finally,
+
+$$nl
+    x = pi / 4 + pi n, n in Z
+$$
+
+</Solution>
+
+### Reducing to \` f(x)/g(x) = 0 \`
+
+If possible to rewrite as $ f(x) / g(x) = 0 $, then, given that $ g(x) != 0 $, the whole equation is reduced to $ f(x) = 0 $ by multiplying both sides by $ g(x) $
+
+#### Example
+
+Solve:
+
+$$
+    cot x - tan x = (cos x - sin x)/(1/2 sin 2x)
+$$
+
+<Solution>
+
+$$nl
+    cos x / (sin x) - sin x / (cos x) = (cos x - sin x) / (1/2 sin 2x)
+    (cos^2 x - sin^2 x)/(sin x cos x) = (cos x - sin x) / (1/2 sin 2x)
+$$
+
+Note that:
+$$
+sin 2x = 2 sin x cos x " " => " " sin x cos x = 1/2 sin 2x 
+$$
+
+Then,
+$$nl
+    (cos^2 x - sin^2 x)/(1/2 sin 2x) - (cos x - sin x)/(1/2 sin 2x) = 0
+    ((cos^2 x - sin^2 x) - (cos x - sin x)) / (1/2 sin 2x) = 0
+$$
+
+Define the set of permissible values:
+
+$$nl
+    sin 2x != 0
+    2x != pi n, n in Z
+    x != pi/2 n, n in Z
+$$
+
+Then, we need to solve
+
+$$nl
+    (cos^2 x - sin^2 x) - (cos x - sin x) = 0
+    (cos x - sin x)(cos x + sin x) - (cos x - sin x ) = 0
+    (cos x - sin x)(cos x + sin x - 1) = 0
+$$
+
+Solving $ cos x - sin x = 0 $:
+
+$$nl
+    cos x - sin x = 0 | div cos x
+    NB: cos x != 0 => x != pi/2 + pi n, n in Z "(already covered)"
+    1 - tan(x) = 0
+    tan(x) = 1
+    x = arctan(1) + pi n, n in Z
+    x = pi/4 + pi n, n in Z
+$$
+
+Solving $ cos x + sin x - 1 = 0 $:
+
+$$nl
+    cos x + sin x = 1
+    cos^2 x + 2 sin x cos x + sin^2 x = 1^2
+    cos^2 x + 2 sin x cos x + sin^2 x = sin^2 x + cos^2 x
+    2 sin x cos x = 0
+    sin 2x = 0
+    2x = pi n, n in Z
+    x = pi/2 n, n in Z
+$$
+
+Since the last solution is not in the set of permissible values,
+
+$$
+    x = pi/4 + pi n, n in Z
+$$
+</Solution>
+
+
