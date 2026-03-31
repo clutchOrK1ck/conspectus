@@ -6,11 +6,15 @@ import starlight from '@astrojs/starlight';
 import remarkMath from 'remark-math';
 import remarkPreserveMeta from './src/plugins/remark-preserve-meta/remarkPreserveMeta';
 import rehypeMath from './src/plugins/rehype-math/rehypeMath';
-import rehypeMermaid from '@beoe/rehype-mermaid';
+import mermaid from 'astro-mermaid';
 
 // https://astro.build/config
 export default defineConfig({
 	integrations: [
+		mermaid({
+			theme: 'forest',
+			autoTheme: true
+		}),
 		starlight({
 			title: 'My Docs',
 			customCss: [
@@ -43,6 +47,6 @@ export default defineConfig({
 			remarkMath,
 			remarkPreserveMeta
 		],
-		rehypePlugins: [rehypeMath, [rehypeMermaid, {strategy: 'file', darkScheme: 'class'}]],
+		rehypePlugins: [rehypeMath],
 	}
 });
