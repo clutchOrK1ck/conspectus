@@ -11,9 +11,11 @@
   },
   "dependencies": {
     "@astrojs/starlight": "^0.38.1",
+    "@beoe/rehype-mermaid": "^0.4.2",
+    "@mathjax/src": "^4.1.1",
     "astro": "^6.0.1",
+    "playwright": "^1.58.2",
     "remark-math": "^6.0.0",
-    "sharp": "^0.34.2",
-    "@mathjax/src": "^4.1.1"
+    "sharp": "^0.34.2"
   }
 }

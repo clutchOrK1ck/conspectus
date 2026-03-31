@@ -1,0 +1,66 @@
+---
+title: Creating diagrams
+description: How to create diagrams and flow charts
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+Writing diagrams in this documentation is powered by [@beoe/rehype-mermaid](https://beoe.stereobooster.com/diagrams/mermaid/). 
+
+
+<Tabs>
+    <TabItem label="Diagram">
+        ```mermaid
+        classDiagram
+            note "From Duck till Zebra"
+            Animal <|-- Duck
+            note for Duck "can fly<br>can swim<br>can dive<br>can help in debugging"
+            Animal <|-- Fish
+            Animal <|-- Zebra
+            Animal : +int age
+            Animal : +String gender
+            Animal: +isMammal()
+            Animal: +mate()
+            class Duck{
+                +String beakColor
+                +swim()
+                +quack()
+            }
+            class Fish{
+                -int sizeInFeet
+                -canEat()
+            }
+            class Zebra{
+                +bool is_wild
+                +run()
+            }
+        ```
+    </TabItem>
+    <TabItem label="Markdown">
+        ```code
+        classDiagram
+            note "From Duck till Zebra"
+            Animal <|-- Duck
+            note for Duck "can fly<br>can swim<br>can dive<br>can help in debugging"
+            Animal <|-- Fish
+            Animal <|-- Zebra
+            Animal : +int age
+            Animal : +String gender
+            Animal: +isMammal()
+            Animal: +mate()
+            class Duck{
+                +String beakColor
+                +swim()
+                +quack()
+            }
+            class Fish{
+                -int sizeInFeet
+                -canEat()
+            }
+            class Zebra{
+                +bool is_wild
+                +run()
+            }
+        ```
+    </TabItem>
+</Tabs>
