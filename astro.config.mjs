@@ -13,7 +13,14 @@ export default defineConfig({
 	integrations: [
 		mermaid({
 			theme: 'forest',
-			autoTheme: true
+			autoTheme: true,
+			mermaidConfig: {
+				securityLevel: 'loose',
+				themeVariables: {
+					background: '#ffffff',
+					primaryColor: '#ffffff',
+				}
+			}
 		}),
 		starlight({
 			title: 'My Docs',
@@ -33,6 +40,10 @@ export default defineConfig({
 				{
 					label: 'Math',
 					autogenerate: { directory: 'math' },
+				},
+				{
+					label: 'Unreal Engine',
+					autogenerate: { directory: 'unreal-engine' },
 				},
 				{
 					label: 'This documentation',

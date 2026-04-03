@@ -1,0 +1,74 @@
+---
+title: PCG
+description: Procedural content generation tools of Unreal Engine
+---
+
+## General architecture overview
+
+Note: in the below UML, public methods mean Blueprint-visible methods, and private methods mean C++-only methods (public, protected, or private)
+
+```mermaid
+classDiagram
+    direction BT
+
+    %% CLASS DEFINITIONS %%
+    
+    class UPCGGraph {
+        +AddNodeOfType(Class~UPCGSettings~ Settings)
+    }
+
+    class FPCGSplineSamplerElement {
+        <<implementors...>>
+    }
+
+    class IPCGElement {
+        -ExecuteInternal() bool
+    }
+
+    class UPCGSettings {
+        -CreateElement() FPCGElementPtr
+    }
+    
+    class UPCGSplineSamplerSettings {
+        <<implementors...>>
+    }
+
+    class UPCGNode {
+
+    }
+
+    class FPCGGraphExecutor {
+        -Schedule(UPCGGraph Graph) FPCGTaskId
+        -Schedule(UPCGComponent Component) FPCGTaskId
+    }
+
+    class UPCGSubsystem {
+        -ScheduleComponent(UPCGComponent Component)
+        -ScheduleGraph(UPCGGraph Graph)
+    }
+
+    class UPCGComponent {
+        -GetSubsystem() UPCGSubsystem
+        +SetGraph(InGraph)
+        +GetGraph() UPCGGraph
+        +GenerateLocal() calls UPCGSubsystem
+    }
+
+    %% CLASS RELATIONS %%
+    UPCGGraph --o UPCGComponent
+    UPCGComponent --|> UActorComponent
+    UPCGSplineSamplerSettings --|> UPCGSettings
+    UPCGSettings --o UPCGNode
+    UPCGNode --o UPCGGraph
+    UPCGComponent ..> UPCGSubsystem
+    UPCGSubsystem ..> FPCGGraphExecutor
+    UPCGSettings ..> IPCGElement : creates
+    FPCGSplineSamplerElement --|> IPCGElement : implements
+```
+
+- FPCGGraphExecutor is the class actually responsible for executing the graph. Execution is scheduled and returns execution tasks
+- [UPCGSubsystem](https://dev.epicgames.com/documentation/en-us/unreal-engine/API/Plugins/PCG/UPCGSubsystem) is the subsystem that has access to FPCGGraphExecutor and manages graphs and graph execution, among other things
+- [UPCGGraph](https://dev.epicgames.com/documentation/en-us/unreal-engine/API/Plugins/PCG/UPCGGraph) holds the instructions on the procedural generation. Think of it as an asset. UPCGGraph does not do generation or even data sampling, it's just a data asset
+- [UPCGNode](https://dev.epicgames.com/documentation/en-us/unreal-engine/API/Plugins/PCG/UPCGNode) is the node interface. Think of it as a visual shell having inputs, outputs, etc.
+- [UPCGSettings](https://dev.epicgames.com/documentation/en-us/unreal-engine/API/Plugins/PCG/UPCGSettings) is what actually defines the node. UPCGSettings is saveable to asset manager, and it holds parameters for a given PCG operation. For example, the UPCGSplineSamplerSettings implementor contains settings for spline sampling. UPCGSettings is also responsible for creating the actual graph execution unit which is IPCGElement. Its implementors, like FPCGSplineSamplerElement, define the actual graph node execution logic in their overriden `ExecuteInternal` method
+- [UPCGComponent](https://dev.epicgames.com/documentation/en-us/unreal-engine/API/Plugins/PCG/UPCGComponent) is a component that points to a UPCGGraph and does graph execution, though not by itself but calling UPCGSubsystem instead. It is also responsible for providing certain spatial data on the owning actor
