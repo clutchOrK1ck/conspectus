@@ -3,6 +3,8 @@ title: PCG
 description: Procedural content generation tools of Unreal Engine
 ---
 
+import { Steps } from '@astrojs/starlight/components';
+
 ## General architecture overview
 
 Note: in the below UML, public methods mean Blueprint-visible methods, and private methods mean C++-only methods (public, protected, or private)
@@ -72,3 +74,36 @@ classDiagram
 - [UPCGNode](https://dev.epicgames.com/documentation/en-us/unreal-engine/API/Plugins/PCG/UPCGNode) is the node interface. Think of it as a visual shell having inputs, outputs, etc.
 - [UPCGSettings](https://dev.epicgames.com/documentation/en-us/unreal-engine/API/Plugins/PCG/UPCGSettings) is what actually defines the node. UPCGSettings is saveable to asset manager, and it holds parameters for a given PCG operation. For example, the UPCGSplineSamplerSettings implementor contains settings for spline sampling. UPCGSettings is also responsible for creating the actual graph execution unit which is IPCGElement. Its implementors, like FPCGSplineSamplerElement, define the actual graph node execution logic in their overriden `ExecuteInternal` method
 - [UPCGComponent](https://dev.epicgames.com/documentation/en-us/unreal-engine/API/Plugins/PCG/UPCGComponent) is a component that points to a UPCGGraph and does graph execution, though not by itself but calling UPCGSubsystem instead. It is also responsible for providing certain spatial data on the owning actor
+
+## PCG flow
+
+```mermaid
+flowchart LR
+    spatial["Obtain spatial input data"]
+    sample["Sample points on this data"]
+    transform["Points operations/transformations"]
+    final["Create instances or actors on the points"]
+
+    spatial --> sample --> transform --> final
+```
+
+In general, PCG graph follow this pattern:
+
+<Steps>
+1. *Obtain spatial input data*
+
+    The data usually comes from the actor owning the PCG component. It can be volume, mesh, splines, landscape, etc.
+
+2. *Sample points on this data*
+
+    There is a number of samplers available. Points can be sampled on a spline, in a volume, on a landscape, uniformly or randomly
+
+3. *Points operations/transformations*
+
+    PCG provides a large number of operations to affect the points distribution
+
+4. *Create instances or actors on the points*
+
+    The points may be used to create static meshes, foliage, or actors. The actors placed will inherit points transforms
+
+</Steps>
