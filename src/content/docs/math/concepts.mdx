@@ -1,0 +1,49 @@
+---
+title: Concepts
+---
+
+## Homogeneity
+
+### Algebratic Homogeneity
+
+A function $ f(x, y, ...) $ is homogeneous of degree $ k $ if $ f(t x, t y, ...) = t^k f(x, y, ...) $. For example,
+
+$$
+    f(x, y, z) = (x + y) / z
+$$
+
+is homogeneous of degree 0 because:
+
+$$
+    (tx + ty) / (tz) = (t(x + y)) / (tz) = t^0 (x + y) / z
+$$
+
+### Homogeneous polynomials
+
+Loosely speaking, polynomials of $ x, y, ... $ are homogeneous if powers of $ x, y, ... $ add up to the same total degree. For example,
+
+$$
+    x^2 + 3xy - 2y^2
+$$
+
+is homogeneous because $ 2 = 1 + 1 = 2 $. Homogeneous polynomials are always homogeneous in degree $ k $ which is equal to the polynomial's degree (its largest power). For example,
+
+$$
+    2x^3 + x^2 y + 8y^3
+$$
+
+is homogeneous of degree $ 3 $:
+
+$$width = null, overflow = scroll
+    2 (tx)^3 + (tx)^2 ty + 8 (ty)^3 = 2 t^3 x^3 + t^2 x^2 ty + 8 t^3 y^3 = 2 t^3 x^3 + t^3 x^2 y + 8 t^3 y^3 = t^3 (2 x^3 + x^2 y + 8 y^3)
+$$
+
+## Rational functions
+
+Rational functions are functions that are quotients of two polynomials. For example, the function
+
+$$
+    y = (P(x)) / (Q(x))
+$$
+
+where $ P(x), Q(x) $ are polynomials, is a rational function.

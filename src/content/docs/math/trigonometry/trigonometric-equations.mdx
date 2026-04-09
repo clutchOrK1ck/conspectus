@@ -6,7 +6,7 @@ import Solution from '/src/components/Solution.astro';
 
 ## Elementary trigonometric equations
 
-### \` sin(x) \`
+### \` sin(x) = a \`
 
 The equation $ sin x = a $ has solutions if $ a in [-1; 1] $
 
@@ -24,7 +24,7 @@ $$
 | $ 1 $ | $ pi/2 + 2 pi n,\ n in Z $ |
 | $ -1 $ | $ pi/2 + 2 pi n,\ n in Z $ |
 
-### \` cos(x) \`
+### \` cos(x) = a \`
 
 The equation $ cos x = a $ has solutions if $ a in [-1; 1] $
 
@@ -234,6 +234,132 @@ Since the last solution is not in the set of permissible values,
 $$
     x = pi/4 + pi n, n in Z
 $$
+</Solution>
+
+### Homogeneous trigonometric equations
+
+Homogeneous trigonometric equations are defined as [homogeneous polynomials](/math/concepts/#homogeneous-polynomials) of $ cos(x), sin(x) $ equal to 0:
+
+$$
+    sum_(i = 0 .. n) a_i * sin^(n-i) x * cos^i x = 0
+$$
+
+... or, if expanded:
+
+$$width = null, overflow = scroll
+    a_0 sin^n(x) + a_1 sin^(n-1)(x) cos(x) + a_2 sin^(n-2)(x) cos^2(x) + ... + a_n cos^n x = 0
+$$
+
+where $ a_i in R $
+
+These equations are solved by dividing by $ sin^n x $ or $ cos^n x $
+
+#### Example
+
+Solve:
+
+$$
+    3 sin^2 x - 5 sin x cos x - 8 cos^2 x = 0
+$$
+
+<Solution>
+    $$nl, justify = left
+        3 sin^2 x - 5 sin x cos x - 8 cos^2 x = 0 | div cos^2 x, cos x != 0, x != pi/2 + pi n
+        3 tan^2 x - 5 tan x - 8 = 0
+        tan x -> t, x != pi/2 + pi n
+        3 t^2 - 5 t - 8 = 0
+        D = 25 + 96 = 121
+        sqrt D = +- 11
+        t_(1,2) = (5 +- 11) / 6
+        t = [\{:(8/3),(-1):}
+        => 
+        1) tan x = 8/3
+        x = arctan (8/3) + pi n, n in Z
+        2) tan x = -1
+        x = arctan (-1) + pi n = -pi/4 + pi n, n in Z
+    $$
+</Solution>
+
+### Equations reducible to homogeneous
+
+Equations of the form:
+
+$$
+    a_0 sin^n x + ... + a_n cos^n x = d
+$$
+
+can *sometimes* be reduced to normal homogeneous equations by rewriting $ d $ as $ d(sin^2 x + cos^2 x) $. Given a passing form of $ d $, subtracting $ d (sin^2 x + cos^2 x) $ from both sides will yield a normal homogeneous equation.
+
+#### Example
+
+Solve:
+
+$$
+    2 sin^3 x = cos x
+$$
+
+<Solution>
+    $ 2 sin^3 x = cos x $ *could* be a homogeneous equation of degree 3. This can be indeed achieved by rewriting as:
+
+    $$nl
+        2 sin^3 x = cos x (sin^2 x + cos^2 x)
+        2 sin^3 x - cos x sin^2 x - cos^3 x = 0
+    $$
+
+    ...which is a homogeneous equation, solved in the usual way.
+
+    $$nl
+        2 sin^3 x - cos x sin^2 x - cos^3 x = 0 | div cos^3 x
+        2 tan^3 x - tan^2 x - 1 = 0
+        tan x -> t
+        2 t^3 - t^2 - 1 = 0
+        t^3 + t^3 - t^2 - 1 = 0
+        t^3 - 1 + t^3 - t^2 = 0
+        (t - 1)(t^2 + t + 1) + t^2(t - 1) = 0
+        (t - 1)(2t^2 + t + 1) = 0
+    $$
+
+    ... and so on.
+</Solution>
+
+### Form \` R(sin(nx), cos(kx), tan(mx), cot(lx)) = 0 \`
+
+Equations of form $ R(sin(nx), cos(kx), tan(mx), cot(lx)) = 0 $ where $ R $ is a [rational function](/math/concepts/#rational-functions) are solvable through universal trigonometric substitution $ t = tan(x/2) $. Then, using [these trig formulas](/math/trigonometry/main-trigonometric-formulas/#tan-alpha-over-2), it follows that:
+
+$$nl
+    sin x = (2t) / (1 + t^2)
+    cos x = (1 - t^2) / (1 + t^2)
+    tan x = (2t) / (1 - t^2)
+$$
+
+#### Example
+
+Solve:
+
+$$
+    5 sin 2x - 5 cos 2x = tan x + 5
+$$
+
+<Solution>
+    The equation conforms to $ R(sin(nx), cos(kx), tan(mx), cot(lx)) = 0 $ because it can be rewritten as
+
+    $$
+        5 sin 2x - 5 cos 2x - tan x - 5 = 0
+    $$
+
+    In this case, we can think of the denominator as simply $ sin^0 (2x) $ or similar.
+
+    Perform substitution: $ tan x -> t $. Then,
+
+    $$nl
+        sin 2x = (2t) / (1 + t^2)
+        cos 2x = (1 - t^2) / (1 + t^2)
+        5 * (2t) / (1 + t^2) - 5 * (1 - t^2)/(1 + t^2) - t - 5 = 0
+    $$
+
+    Note that $ x != pi / 2 + pi n, n in Z $
+
+    
 </Solution>
 
 
