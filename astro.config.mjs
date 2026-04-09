@@ -5,6 +5,7 @@ import starlight from '@astrojs/starlight';
 // math support
 import remarkMath from 'remark-math';
 import remarkPreserveMeta from './src/plugins/remark-preserve-meta/remarkPreserveMeta';
+import remarkHeadingId from 'remark-custom-heading-id'; // support for custom heading ids in markdown
 import rehypeMath from './src/plugins/rehype-math/rehypeMath';
 import rehypeMermaid from '@beoe/rehype-mermaid';
 
@@ -45,7 +46,8 @@ export default defineConfig({
 	markdown: {
 		remarkPlugins: [
 			remarkMath,
-			remarkPreserveMeta
+			remarkPreserveMeta,
+			remarkHeadingId
 		],
 		rehypePlugins: [rehypeMath, [rehypeMermaid, {darkScheme: 'class'}]],
 	}

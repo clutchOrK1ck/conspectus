@@ -18,6 +18,8 @@
     "astro-mermaid": "^2.0.1",
     "mermaid": "^11.13.0",
     "playwright": "^1.58.2",
+    "remark-custom-heading-id": "^2.0.0",
+    "remark-heading-id": "^1.0.1",
     "remark-math": "^6.0.0",
     "sharp": "^0.34.2"
   }
