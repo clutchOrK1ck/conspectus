@@ -77,16 +77,6 @@ classDiagram
 
 ## PCG flow
 
-```mermaid
-flowchart LR
-    spatial["Obtain spatial input data"]
-    sample["Sample points on this data"]
-    transform["Points operations/transformations"]
-    final["Create instances or actors on the points"]
-
-    spatial --> sample --> transform --> final
-```
-
 In general, PCG graph follow this pattern:
 
 <Steps>
@@ -119,9 +109,27 @@ PCG graphs can accept parameters. The collection of parameters for a PCG graph i
 ```mermaid
 classDiagram
     class UPCGSpatialData {
-
+        +GetBounds() FBox
+        +ToPointData() PCGPointData
+        +ToPointDataWithContext(PCGContext) PCGPointData
+        +SamplePoint(Transform, Bounds, OutPoint) bool
+        +IntersectionWith(SpatialData) PCGIntersectionData
+        +UnionWith(SpatialData) PCGUnionData
+        +Subtract(SpatialData) PCGDifferenceData
     }
 ```
+
+Implementations of UPCGSpatialData include:
+
+- UPCGPointData
+- UPCGVolumeData
+- UPCGDifferenceData, UPCGUnionData, UPCGIntersectionData
+- UPCGWorldRayHitData
+- UPCGLandscapeData
+- UPCGSplineData
+- UPCGSurfaceData
+
+... and others
 
 ## Graph Editor
 
@@ -211,3 +219,7 @@ Named reroutes basically allow to save the output pin of a node sub-tree into a 
 ### Set operations do not only work for points
 
 Set operations (difference, union, etc.) can also be performed on other types of spatial data - for example, collision shapes of actors. This makes it especially convenient to remove points that collide with collision shapes of actors in the world - for example, preventing spawning trees inside buildings etc.
+
+### Applying procedural generation to existing world actors
+
+You can easily apply procedural generation to certain existing world actors. They can be accessed by the `GetActorData` node and they can be limited to a certain class and only to actors that are overlapping the PCG volume. In this way, you can scatter things around actors or spawn elements onto existing level meshes.
