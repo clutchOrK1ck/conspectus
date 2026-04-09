@@ -29,14 +29,17 @@ export default defineConfig({
 			sidebar: [
 				{
 					label: 'Math',
+					collapsed: true,
 					autogenerate: { directory: 'math' },
 				},
 				{
 					label: 'Unreal Engine',
+					collapsed: true,
 					autogenerate: { directory: 'unreal-engine' },
 				},
 				{
 					label: 'This documentation',
+					collapsed: true,
 					autogenerate: { directory: 'doc-reference' },
 				},
 			],
