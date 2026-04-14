@@ -1,0 +1,88 @@
+trig-ratios:
+  - angle-rad: pi/6
+    angle-degrees: 30
+    sin: 1/2
+    cos: sqrt(3)/2
+    tan: sqrt(3)/3
+    cot: sqrt(3)
+  - angle-rad: pi/4
+    angle-degrees: 45
+    sin: sqrt(2)/2
+    cos: sqrt(2)/2
+    tan: 1
+    cot: 1
+  - angle-rad: pi/3
+    angle-degrees: 60
+    sin: sqrt(3)/2
+    cos: 1/2
+    tan: sqrt(3)
+    cot: sqrt(3)/3
+  - angle-rad: pi/2
+    angle-degrees: 90
+    sin: 1
+    cos: 0
+    cot: 0
+  - angle-rad: (2pi)/3
+    angle-degrees: 120
+    sin: sqrt(3)/2
+    cos: -1/2
+    tan: -sqrt(3)
+    cot: -sqrt(3)/3
+  - angle-rad: (3pi)/4
+    angle-degrees: 135
+    sin: sqrt(2)/2
+    cos: -sqrt(2)/2
+    tan: -1
+    cot: -1
+  - angle-rad: (5pi)/6
+    angle-degrees: 150
+    sin: 1/2
+    cos: -sqrt(3)/2
+    tan: -sqrt(3)/3
+    cot: -sqrt(3)
+  - angle-rad: pi
+    angle-degrees: 180
+    sin: 0
+    cos: -1
+    tan: 0
+  - angle-rad: (7pi)/6
+    angle-degrees: 210
+    sin: -1/2
+    cos: -sqrt(3)/2
+    tan: sqrt(3)/3
+    cot: sqrt(3)
+  - angle-rad: (5pi)/4
+    angle-degrees: 225
+    sin: -sqrt(2)/2
+    cos: -sqrt(2)/2
+    tan: 1
+    cot: 1
+  - angle-rad: (4pi)/3
+    angle-degrees: 240
+    sin: -sqrt(3)/2
+    cos: -1/2
+    tan: sqrt(3)
+    cot: sqrt(3)/3
+  - angle-rad: (3pi)/2
+    angle-degrees: 270
+    sin: -1
+    cos: 0
+    cot: 0
+  - angle-rad: (5pi)/3
+    angle-degrees: 300
+    sin: -sqrt(3)/2
+    cos: 1/2
+    tan: -sqrt(3)
+    cot: -sqrt(3)/3
+  - angle-rad: (7pi)/4
+    angle-degrees: 315
+    sin: -sqrt(2)/2
+    cos: sqrt(2)/2
+    tan: -1
+    cot: -1
+  - angle-rad: (11pi)/6
+    angle-degrees: 330
+    sin: -1/2
+    cos: sqrt(3)/2
+    tan: -sqrt(3)/3
+    cot: -sqrt(3)
