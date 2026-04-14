@@ -2,7 +2,7 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 
-// math support
+import yaml from '@rollup/plugin-yaml';
 import remarkMath from 'remark-math';
 import remarkPreserveMeta from './src/plugins/remark-preserve-meta/remarkPreserveMeta';
 import remarkHeadingId from 'remark-custom-heading-id'; // support for custom heading ids in markdown
@@ -45,6 +45,10 @@ export default defineConfig({
 			],
 		}),
 	],
+
+	vite: {
+		plugins: [yaml()]
+	},
 
 	markdown: {
 		remarkPlugins: [
