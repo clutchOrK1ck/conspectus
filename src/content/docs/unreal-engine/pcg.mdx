@@ -5,6 +5,11 @@ description: Procedural content generation tools of Unreal Engine
 
 import { Steps } from '@astrojs/starlight/components';
 
+This section provides overview and insights of the procedural content generation (PCG) framework of Unreal Engine. More resources:
+
+- a [video tutorial series](https://dev.epicgames.com/community/learning/tutorials/1wro/unreal-engine-pcg-tutorial-series)
+- official PCG graph [node reference](https://dev.epicgames.com/documentation/unreal-engine/procedural-content-generation-framework-node-reference-in-unreal-engine)
+
 ## General architecture overview
 
 Note: in the below UML, public methods mean Blueprint-visible methods, and private methods mean C++-only methods (public, protected, or private)
@@ -223,3 +228,7 @@ Set operations (difference, union, etc.) can also be performed on other types of
 ### Applying procedural generation to existing world actors
 
 You can easily apply procedural generation to certain existing world actors. They can be accessed by the `GetActorData` node and they can be limited to a certain class and only to actors that are overlapping the PCG volume. In this way, you can scatter things around actors or spawn elements onto existing level meshes.
+
+### Blueprint construction and graph updates
+
+If the PCG component is being used inside a parent Actor (and not in the default PCG volume), it is sometimes useful to have control parameters as the parent actor properties. In that case, the PCG component needs to forcibly updated each through the actor's construction script with `Graph->GenerateLocal()`
