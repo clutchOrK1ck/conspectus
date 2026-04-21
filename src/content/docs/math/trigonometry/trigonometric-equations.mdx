@@ -3,6 +3,7 @@ title: Trigonometric equations
 ---
 
 import Solution from '/src/components/Solution.astro';
+import { Tabs, TabItem } from '@astrojs/starlight/components';
 
 ## Elementary trigonometric equations
 
@@ -359,7 +360,147 @@ $$
 
     Note that $ x != pi / 2 + pi n, n in Z $
 
+    $$nl
+        (10t - 5 + 5t^2)/(1 + t^2) - ((t + 5)(1 + t^2))/(1 + t^2) = 0
+        ...
+        (-t^3 + 9t - 10)/(1+t^2) = 0
+        [(t^3 - 9t + 10 = 0), (1 + t^2 != 0):}
+        t = [(2), (-1 + sqrt(6)), (-1 - sqrt(6)):} 
+        "substitute back" =>
+        tan(x) = [(2), (-1 + sqrt(6)), (-1 - sqrt(6)):}
+    $$
+
+    These equations are elementary and solved correspondingly.
     
+</Solution>
+
+### Homogeneous equations of 1st degree
+
+Equations of shape
+
+$$
+    a * sin(mx) +- b * cos(mx) = c
+$$
+
+where $ a, b, c $ are constants.
+
+Methods: universal trigonometric substitution or the method of auxilliary angle.
+
+Method of auxilliary angle: divide both sides by $ sqrt(a^2 + b^2) $. Then:
+
+$$nl
+    a / sqrt(a^2 + b^2) = sin(alpha)
+    b / sqrt(a^2 + b^2) = cos(alpha)
+$$
+
+or 
+
+$$nl
+    a / sqrt(a^2 + b^2) = cos(theta)
+    b / sqrt(a^2 + b^2) = sin(theta)
+$$
+
+for some angles $ alpha, theta $ in a right triangle. Then solve using [identities](/math/trigonometry/main-trigonometric-formulas#functions-of-sum) of trigonometric functions of sum of arguments
+
+<Solution promptShow = "Show explanation" promptHide = "Hide explanation">
+    Assume a right triangle whose legs are equal to $ a, b $ from the equation. Then the hypotenuse of this triangle is $ sqrt(a^2 + b^2) $. Then, when we divide both sides of the equation by $ sqrt(a^2 + b^2) $, we receive:
+
+    $$
+        a / sqrt(a^2 + b^2) sin(mx) +- b / sqrt(a^2 + b^2) cos(mx) = c / sqrt(a^2 + b^2)
+    $$
+
+    If we arbitrarily choose an acute angle $ alpha $ (resp. $ theta $) in this right triangle, $ a $ is an adjacent (resp. opposite) side to it, with $ a / sqrt(a^2 + b^2) = cos(alpha) $ (resp. $ sin(theta) $), and $ b $ is opposite (resp. adjacent) side to it, with $ b / sqrt(a^2 + b^2) = sin(alpha) $ (resp. $ cos(theta) $).
+
+    Then we can write this equation as
+
+    $$nl
+        sin(alpha) sin(mx) +- cos(alpha) cos(mx) = c / sqrt(a^2 + b^2)
+        or
+        cos(theta) sin(mx) +- sin(theta) cos(mx) = c / sqrt(a^2 + b^2)
+    $$
+
+    which can be then solved using trigonometric identities to rewrite the left side as a trigonometric function of sum of arguments.
+</Solution>
+
+#### Example
+
+Solve: 
+
+$$
+    sqrt(3) sin(3x) - cos(3x) = 1
+$$
+
+<Solution>
+    Start by dividing both sides by the hypotenuse of a right triangle with legs $ sqrt(3), 1 $:
+
+    $$nl
+        sqrt( sqrt(3)^2 + 1^2 ) = sqrt( 4 ) = 2
+        sqrt(3) / 2 sin(3x) - 1 / 2 cos(3x) = 1 / 2
+    $$
+
+    It does not matter if we assign $ sqrt(3)/2 = cos(alpha) $ or $ sqrt(3)/2 = sin(alpha) $ for some angle $ alpha $, see both solutions:
+
+    <Tabs>
+        <TabItem label="` sqrt(3)/2 = cos(alpha) `">
+            $$nl
+                cos(alpha) sin(3x) - sin(alpha) cos(3x) = 1/2
+                sin(3x - alpha) = 1/2
+                3x - alpha = {(arcsin (1/2) + 2 pi n), (pi - arcsin (1/2) + 2 pi n):}
+                3x = {(arcsin (1/2) + 2 pi n + arccos(sqrt(3)/2)), (pi - arcsin (1/2) + 2 pi n + arccos(sqrt(3)/2)):}
+                3x = {(pi/3 + 2 pi n), (pi + 2 pi n):}
+                x = {(pi/9 + 2/3 pi n), (pi/3 + 2/3 pi n):}
+            $$ 
+        </TabItem>
+        <TabItem label="` sqrt(3)/2 = sin(alpha) `">
+            $$nl
+                sin(alpha) sin(3x) - cos(alpha) cos(3x) = 1/2
+                cos(alpha + 3x) = -1/2
+                alpha + 3x = +- arccos(-1/2) + 2 pi n, n in Z
+                3x = +- arccos(-1/2) - arcsin(sqrt(3)/2) + 2 pi n, n in Z
+                3x = +- (2pi)/3 - pi/3 + 2 pi n, n in Z
+                x = +- (2pi)/9 - pi/9 + 2/3 pi n, n in Z
+                x = [(pi/9 + 2/3 pi n), (-pi/3 + 2/3 pi n):}, n in Z
+            $$
+
+            Note that $ -pi/3 + 2/3 pi n $ is essentially the same sequence as $ pi/3 + 2/3 pi n $
+        </TabItem>
+    </Tabs>
+</Solution>
+
+### Shape \`R(sinx +- cosx; sinx*cosx)\`
+
+Method: substitution $ t = sinx +- cosx $
+
+Then:
+
+$$nl
+    t^2 = sin^2(x) +- 2 sinx cosx + cos^2(x)
+    sinx cosx = +- (t^2 - 1)/2
+$$
+
+#### Example
+
+Solve:
+
+$$
+    sinx + cosx - 2sqrt(2) sinx cos x = 0
+$$
+
+<Solution>
+    $$nl
+        sin x + cos x -> t
+        => t^2 = sin^2 + 2 sin x cos x + cos^2
+        => sin x cox = (t^2 - 1)/2
+        t - 2sqrt(2) (t^2 - 1)/2 = 0
+        sqrt(2)t^2 - t - sqrt(2) = 0
+        t^2 - sqrt(2) / 2 t - 1 = 0
+        ...
+        t = [(sqrt(2)), (-sqrt(2)/2):}
+        "substitute back" =>
+        [(sinx + cosx = sqrt(2)), (sinx + cosx = -sqrt(2)/2):}
+    $$
+
+    The latter equations are solved using one of the methods described above.
 </Solution>
 
 
