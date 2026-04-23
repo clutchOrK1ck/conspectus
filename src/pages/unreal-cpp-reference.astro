@@ -1,0 +1,110 @@
+---
+import { getCollection, render } from 'astro:content';
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+
+function makeSlug(title: string): string {
+    return title.replace(' ', '-').toLowerCase();
+}
+
+const cppRefItems = await getCollection('unreal-code-reference');
+
+type TOCItem = {
+    slug: string;
+    title: string;
+    children: TOCItem[];
+};
+
+const TOC: TOCItem[] = [];
+
+// the rendered .mdx files
+const renderedItems: Record<string, any> = {};
+
+// build the table of contents and render the .mdx files
+for (const cppRefItem of cppRefItems) {
+    const groupName = cppRefItem.data.group;
+    const itemName = cppRefItem.data.name;
+    const groupSlug = makeSlug(cppRefItem.data.group);
+    const nameSlug = makeSlug(cppRefItem.data.name);
+
+    if (!TOC.find((tocItem) => tocItem.slug === groupSlug)) {
+        TOC.push(
+            {
+                slug: groupSlug,
+                title: groupName,
+                children: []
+            }
+        )
+    };
+
+    TOC.find((tocItem) => tocItem.slug === groupSlug)?.children.push(
+        {
+            slug: nameSlug,
+            title: itemName,
+            children: []
+        }
+    );
+
+    const { Content } = await render(cppRefItem);
+    renderedItems[nameSlug] = Content;
+}
+
+// sort the table of contents by group name and inside groups by item name
+TOC.sort((tocA, tocB) => tocA.slug.localeCompare(tocB.slug));
+for (const tocItem of TOC) {
+    tocItem.children.sort((tocA, tocB) => tocA.slug.localeCompare(tocB.slug));
+}
+
+// starlight wants headings as flat array (depth distinguished by 'depth' member)
+type TOCStarlightHeading = {
+    depth: number;
+    slug: string;
+    text: string;
+}
+
+const flatHeadings: TOCStarlightHeading[] = [];
+
+TOC.forEach((tocGroupItem) => {
+    flatHeadings.push({
+        depth: 2,
+        slug: tocGroupItem.slug,
+        text: tocGroupItem.title
+    });
+
+    tocGroupItem.children.forEach((tocItem) => {
+        flatHeadings.push({
+            depth: 3,
+            slug: tocItem.slug,
+            text: tocItem.title
+        });
+    });
+})
+---
+
+<StarlightPage
+    frontmatter={{
+        title: 'C++ reference',
+        description: 'Unreal Engine C++ reference'
+    }}
+    headings={flatHeadings}
+>
+    {
+        TOC.map((tocGroupItem) => (
+            <>
+                <h2 id={tocGroupItem.slug}>{tocGroupItem.title}</h2>
+            
+                {
+                    tocGroupItem.children.map((tocItem) => {
+                        const RenderedContent = renderedItems[tocItem.slug];
+
+                        return (
+                            <>
+                                <h3 id={tocItem.slug}>{tocItem.title}</h3>
+                                <RenderedContent />
+                            </>
+                        );
+                    })
+                }
+            </>
+        ))
+    }
+</StarlightPage>

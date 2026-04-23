@@ -35,7 +35,25 @@ export default defineConfig({
 				{
 					label: 'Unreal Engine',
 					collapsed: true,
-					autogenerate: { directory: 'unreal-engine' },
+					
+					items: [
+						{
+							label: 'Editor',
+							collapsed: true,
+							autogenerate: { directory: 'unreal-engine/Editor' }
+						},
+						{
+							label: 'Runtime',
+							collapsed: true,
+							autogenerate: { directory: 'unreal-engine/runtime' }
+						},
+						{
+							label: 'Miscellaneous',
+							collapsed: true,
+							autogenerate: { directory: 'unreal-engine/misc' }
+						},
+						{ label: 'C++ reference', link: '/unreal-cpp-reference/'}
+					]
 				},
 				{
 					label: 'This documentation',

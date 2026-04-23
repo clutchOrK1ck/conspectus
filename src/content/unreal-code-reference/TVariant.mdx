@@ -1,0 +1,23 @@
+---
+name: TVariant
+type: class
+group: Basic types
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+A container that can store objects of arbitrary types.
+
+```cpp
+// declare variant types
+using MyVariantType = TVariant<int, float, FOtherType>; // can store ints, floats, and FOtherType instances
+
+// create
+auto VariantVar = MyVariantType{TInPlaceType<FOtherType>(), FOtherType()};
+
+// check type
+VariantVar.IsType<FOtherType>();
+
+// get the typed value
+VariantVar.Get<FOtherType>(); // returns a reference to the contained value
+```
