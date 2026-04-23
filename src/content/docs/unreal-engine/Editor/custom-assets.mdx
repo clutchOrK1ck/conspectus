@@ -1,0 +1,28 @@
+---
+title: Custom assets
+---
+
+import { FileTree } from '@astrojs/starlight/components';
+
+This page describes the creation of custom asset classes.
+
+## Module structure
+
+Creating custom asset classes usually means adding *runtime support* (`UObject`s that are used by the actual game runtime code) and *editor support* (editor utilities like a dedicated asset editor or asset actions like creation/import/export etc.). An example could be a dialogue system where runtime classes are `UDialogueAsset` and `UDialogueComponent`, and editor support involves a node-based dialogue editor. Since editor utilities are not needed by the actual game, they are placed into a separate module, resulting in the following module structure:
+
+<FileTree>
+- Source
+    - MyProjectName
+        - Private/
+        - Public/
+        - MyProjectName.Build.cs
+    - MyProjectNameEditor
+        - Private/
+        - Public
+            - ...
+            - MyProjectNameEditor.h editor module startup and shutdown
+        - MyProjectNameEditor.Build.cs
+- MyProject.uproject has to correctly point to MyProjectNameEditor module as an editor module
+</FileTree>
+
+## Editor support for the custom asset class

@@ -1,0 +1,34 @@
+---
+title: Testing C++ code
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+## LLT
+
+<Aside type='caution' title='WIP'>
+    This item is work in progress. Content may be incomplete or inconsistent.
+</Aside>
+
+LLT (low-level testing) in Unreal Engine is an approach to write plain C++ tests (without dependences on the game runtime). Its the closest alternative to the plain unit tests from other languages. LLT uses [Catch2](https://catch2.org/) with some additions. Catch2 is a modern C++ testing framework, independent of Unreal Engine or Epic. Epic differentiates (at least they used to differentiate until version 5.3) between *explicit* and *implicit* LLT tests:
+- *explicit* LLT tests are placed into a separate UE module with its **own** `Target.cs`. *Note*: there seems to be good support in VS for it but in Rider support is lacking as of 2026. UE explicit test modules are copmiled into an actual `.exe` program which can be run from command line and supplying arguments to configure test execution. To compile such modules, Epic recommends to use BuildGraph, with Unreal Build Tool and Visual Studio being the other two options. See more info [here](https://dev.epicgames.com/documentation/unreal-engine/build-and-run-low-level-tests-in-unreal-engine)
+- *implicit* LLT tests are part of *another* UE module, placed under `Tests` directory. Epic seems to be abandoning the approach since the implicit tests are not documented after version 5.3. The implicit tests and built with UBT by supplying the -Mode=Test argument. Running is also simply running the `.exe`, as with the explicit tests. The last mention of *implicit* tests is Engine version 5.3 [here](https://dev.epicgames.com/documentation/unreal-engine/build-and-run-low-level-tests-in-unreal-engine?application_version=5.3)
+
+## Automation Test Framework
+
+This framework is different to LLT that it is integrated into the Editor itself. Tests written in this framework are visible and runnable from the editor UI, and there UI features to organize and structure them, and view their results.
+
+### Simple automation tests
+
+Simple automation tests can be placed anywhere in the module in a single `.cpp` file:
+
+```cpp
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(TestClassName, "Category.Subcategory.Subsubcategory", EAutomationTestFlags::EditorContext)
+
+bool TestClassName::RunTest(const FString& Parameters) {
+    // ... test code here
+    return true;
+}
+```
+
+The macro declares a class called `TestClassName`, with `FAutomationTestBase` as parent. You write tests by overriding `FAutomationTestBase::RunTest` and using its reporting methods (`AddError` for example). Note that the category string will place the test under `Category > Subcategory > Subsubcategory` in the editor UI. Note that test behavior, expected context and restrictions is configured by `EAutomationTestFlags`.
