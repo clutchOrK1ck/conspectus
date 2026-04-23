@@ -26,3 +26,14 @@ Creating custom asset classes usually means adding *runtime support* (`UObject`s
 </FileTree>
 
 ## Editor support for the custom asset class
+
+### Asset actions
+
+Asset actions like creation, import/export, duplication, and context actions applicable to selected assets, are managed by the AssetTools singleton, available from the `AssetToolsModule`. The singleton provides many Blueprint-callable asset actions and registers new aset types and actions applicable to the asset types. For example, registering asset actions and new asset category for a custom asset in the module startup:
+
+```cpp
+void MyModule::StartupModule() {
+    // get the asset tools module
+
+}
+```
