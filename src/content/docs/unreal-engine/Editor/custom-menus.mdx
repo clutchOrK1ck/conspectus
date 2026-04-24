@@ -14,6 +14,7 @@ This section describes how to build custom editor menus.
 <Pannable initialZoom={3}>
 ```mermaid
 classDiagram
+    direction BT
     class FUICommandsList {
         +MapAction(FUICommandInfo*, FExecuteAction, FCanExecuteAction)
         +Append(FUICommandList&)
@@ -28,18 +29,35 @@ classDiagram
         NewCommand (CommandName, CommandLabel, CommandDescription) FUICommandInfoDecl
     }
 
-    class TCommands {
-        +Register()
+    class TCommands~FCommandsClass~ {
+        +Register() static, calls FCommandsClass RegisterCommands (CRTP)
         +Unregsiter()
     }
 
+    class FCommandsClass {
+        -FUICommandInfo* CommandAInfo;
+        -FUICommandInfo* CommandBInfo;
+        +RegisterCommands();
+    }
+
     class FUICommandInfo {
-        +MakeCommandInfo(FBindingContext&, FUICommandInfo& OutCommand, CommandName, CommandLabel, Description, Icon, ActionType, InputChord) static
+        -FText Label
+        -FText Description
+        -TArray<...> Chords
+        -FSlateIcon Icon
+        -FName BindingContext
+        -FName Bundle
+        +MakeCommandInfo(...Args) static
     }
     
 %% RELATIONSHIPS
 TCommands --> FBindingContext
+FCommandsClass --> TCommands~FCommandsClass~
 ```
 </Pannable>
+
+- `FUICommandInfo` contains meta about the command such as its name and description, what key combinations (chords) are valid for it etc. `FUICommandInfo` can be created with its static method `MakeCommandInfo` or with the `UI_COMMAND` macro
+- `TCommands<FCommandsClass>` is a manager for FCommandsClass, it will create and keep a singleton of `FCommandsClass`
+- an `FCommandsClass` is usually just a singleton container (managed by `TCommand` via CRTP) having the `FUICommandInfo*` command infos, they are populated in `RegisterCommands()` either with `FUICommandInfo::MakeCommandInfo()` or with the `UI_COMMAND` macro
 
 
