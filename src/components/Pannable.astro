@@ -1,224 +1,252 @@
 ---
-type Props = {
-  height?: string;
-  initialZoom?: number;
-  minZoom?: number;
-  maxZoom?: number;
-  zoomFactor?: number;
-};
-
-const {
-  height = "520px",
-  initialZoom = 1,
-  minZoom = 0.25,
-  maxZoom = 5,
-  zoomFactor = 1.2,
-} = Astro.props;
-
-const id = `pannable-${crypto.randomUUID()}`;
+// Pannable.astro
+// Wraps any mermaid (or other SVG) content with pan & zoom behaviour.
+// The rehypeMermaid plugin renders <pre class="mermaid"> → <svg> at build
+// time, so the slot will contain a plain <svg> element by the time the
+// browser sees it.
 ---
 
-<div
-  id={id}
-  class="pannable"
-  style={`--pannable-height: ${height};`}
-  data-initial-zoom={initialZoom}
-  data-min-zoom={minZoom}
-  data-max-zoom={maxZoom}
-  data-zoom-factor={zoomFactor}
->
-  <div class="pannable-viewport">
-    <div class="pannable-content">
+<div class="pan-root" data-pannable>
+  <!-- diagram lives here -->
+  <div class="pan-stage">
+    <div class="pan-canvas">
       <slot />
     </div>
   </div>
 
-  <div class="pannable-controls" aria-label="Zoom controls">
-    <button type="button" data-action="zoom-out" aria-label="Zoom out">−</button>
-    <button type="button" data-action="reset" aria-label="Reset zoom">Reset</button>
-    <button type="button" data-action="zoom-in" aria-label="Zoom in">+</button>
+  <!-- controls -->
+  <div class="pan-controls" aria-label="Zoom controls">
+    <button class="pan-btn" data-zoom="in"  aria-label="Zoom in">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <circle cx="6.5" cy="6.5" r="5"/>
+        <line x1="10.5" y1="10.5" x2="14.5" y2="14.5"/>
+        <line x1="6.5" y1="4" x2="6.5" y2="9"/>
+        <line x1="4" y1="6.5" x2="9" y2="6.5"/>
+      </svg>
+    </button>
+    <hr class="pan-divider" />
+    <button class="pan-btn" data-zoom="reset" aria-label="Reset view">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M2 8a6 6 0 1 0 1.5-3.9"/>
+        <polyline points="2 3 2 8 7 8"/>
+      </svg>
+    </button>
+    <hr class="pan-divider" />
+    <button class="pan-btn" data-zoom="out" aria-label="Zoom out">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <circle cx="6.5" cy="6.5" r="5"/>
+        <line x1="10.5" y1="10.5" x2="14.5" y2="14.5"/>
+        <line x1="4" y1="6.5" x2="9" y2="6.5"/>
+      </svg>
+    </button>
   </div>
 </div>
 
 <style>
-  .pannable {
+  /* ── root container ─────────────────────────────────────────────── */
+  .pan-root {
     position: relative;
-    margin: 1.25rem 0;
-    border: 1px solid var(--sl-color-gray-5);
-    border-radius: 0.75rem;
+    width: 100%;
+    /* respect any height set on the element; fall back to a comfortable default */
+    height: var(--pannable-height, 420px);
+    background: var(--sl-color-bg-sidebar, #f6f6f8);
+    border: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+    border-radius: 10px;
     overflow: hidden;
-    background: var(--sl-color-bg);
+    /* subtle inner shadow to reinforce the "viewport" feel */
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 6%, transparent);
   }
 
-  .pannable-viewport {
-    height: var(--pannable-height);
-    overflow: auto;
+  /* ── scrollable stage (overflow hidden so canvas can float freely) */
+  .pan-stage {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
     cursor: grab;
-    touch-action: none;
-    scrollbar-width: none;
+    user-select: none;
+    -webkit-user-select: none;
   }
 
-  .pannable-viewport::-webkit-scrollbar {
-    display: none;
-  }
-
-  .pannable-viewport.is-dragging {
+  .pan-stage.is-dragging {
     cursor: grabbing;
   }
 
-  .pannable-content {
-    display: inline-block;
-    width: max-content;
-    min-width: 100%;
-    padding: 1rem;
-    user-select: none;
+  /* ── the element we actually transform ─────────────────────────── */
+  .pan-canvas {
+    display: inline-flex;       /* shrink-wrap the SVG */
+    align-items: flex-start;
+    transform-origin: 0 0;
+    /* NOTE: no will-change here — it forces a raster compositing layer
+       which blurs vector SVG content when zoomed in */
   }
 
-  .pannable-content :global(.mermaid) {
-    display: inline-block;
+  /* make sure the mermaid SVG itself plays nice */
+  .pan-canvas :global(svg) {
+    display: block;
+    /* Only neutralise restrictive max-width rules from Starlight/Tailwind.
+       Do NOT set width/height — SVGs with only a viewBox rely on the
+       browser's default intrinsic sizing; overriding to 'auto' collapses them. */
     max-width: none !important;
   }
 
-  .pannable-content :global(svg),
-  .pannable-content :global(.mermaid svg) {
-    max-width: none !important;
-  }
-
-  .pannable-controls {
+  /* ── control panel ──────────────────────────────────────────────── */
+  .pan-controls {
     position: absolute;
-    right: 0.75rem;
-    bottom: 0.75rem;
-    z-index: 10;
-
+    bottom: 16px;
+    right: 16px;
     display: flex;
-    gap: 0.25rem;
-    padding: 0.4rem;
-
-    border: 1px solid var(--sl-color-gray-5);
-    border-radius: 0.5rem;
-    background: color-mix(in srgb, var(--sl-color-gray-6), transparent 8%);
-    box-shadow: 0 0.5rem 1.5rem rgb(0 0 0 / 0.22);
+    flex-direction: column;
+    gap: 2px;
+    padding: 4px;
+    background: color-mix(in srgb, var(--sl-color-bg, #fff) 80%, transparent);
+    backdrop-filter: blur(10px) saturate(160%);
+    -webkit-backdrop-filter: blur(10px) saturate(160%);
+    border: 1px solid color-mix(in srgb, currentColor 14%, transparent);
+    border-radius: 10px;
+    box-shadow:
+      0 4px 16px color-mix(in srgb, #000 12%, transparent),
+      0 1px 3px  color-mix(in srgb, #000 8%, transparent);
   }
 
-  .pannable-controls button {
-    font: inherit;
-    padding: 0.2rem 0.5rem;
-    border: 1px solid var(--sl-color-gray-5);
-    border-radius: 0.35rem;
-    background: var(--sl-color-gray-7);
-    color: var(--sl-color-white);
+  .pan-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 7px;
+    color: color-mix(in srgb, currentColor 70%, transparent);
     cursor: pointer;
+    transition: background 0.15s, color 0.15s, transform 0.1s;
   }
 
-  .pannable-controls button:hover {
-    background: var(--sl-color-gray-5);
+  .pan-btn:hover {
+    background: color-mix(in srgb, var(--sl-color-accent, #7c3aed) 12%, transparent);
+    color: var(--sl-color-accent, #7c3aed);
   }
-</style>
 
-<script is:inline define:vars={{ id }}>
-  const root = document.getElementById(id);
+  .pan-btn:active {
+    transform: scale(0.88);
+  }
 
-  if (root) {
-    const viewport = root.querySelector(".pannable-viewport");
-    const content = root.querySelector(".pannable-content");
+  .pan-btn svg {
+    width: 15px;
+    height: 15px;
+  }
 
-    const initialZoom = Number(root.dataset.initialZoom ?? 1);
-    const minZoom = Number(root.dataset.minZoom ?? 0.25);
-    const maxZoom = Number(root.dataset.maxZoom ?? 5);
-    const zoomFactor = Number(root.dataset.zoomFactor ?? 1.2);
+  .pan-divider {
+    all: unset;
+    display: block;
+    height: 1px;
+    margin: 2px 4px;
+    background: color-mix(in srgb, currentColor 14%, transparent);
+  }</style>
 
-    let scale = initialZoom;
+<script>
+  // Run once per Pannable instance on the page.
+  document.querySelectorAll<HTMLElement>("[data-pannable]").forEach((root) => {
+    const stage  = root.querySelector<HTMLElement>(".pan-stage")!;
+    const canvas = root.querySelector<HTMLElement>(".pan-canvas")!;
 
+    // ── state ────────────────────────────────────────────────────────
+    let tx = 0, ty = 0, scale = 1;
+    const STEP    = 0.2;
+    const MIN     = 0.2;
+    const MAX     = 4;
+
+    // ── helpers ──────────────────────────────────────────────────────
+    function clampScale(s: number) {
+      return Math.min(MAX, Math.max(MIN, s));
+    }
+
+    function applyTransform() {
+      canvas.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+    }
+
+    function centerContent() {
+      // After the first paint we know the SVG size; start it centred.
+      const stageW = stage.offsetWidth;
+      const stageH = stage.offsetHeight;
+      const cW = canvas.scrollWidth;
+      const cH = canvas.scrollHeight;
+      tx = Math.max(0, (stageW - cW) / 2);
+      ty = Math.max(0, (stageH - cH) / 2);
+      applyTransform();
+    }
+
+    // center on first render (SVG is static so immediate is fine)
+    requestAnimationFrame(centerContent);
+
+    // ── pan (pointer drag) ───────────────────────────────────────────
     let dragging = false;
-    let lastX = 0;
-    let lastY = 0;
+    let ox = 0, oy = 0;
 
-    function clamp(value, min, max) {
-      return Math.min(max, Math.max(min, value));
-    }
-
-    function applyZoom() {
-      content.style.zoom = String(scale);
-    }
-
-    function zoomAtViewportCenter(factor) {
-      const oldScale = scale;
-      const nextScale = clamp(scale * factor, minZoom, maxZoom);
-
-      if (nextScale === oldScale) return;
-
-      const rect = viewport.getBoundingClientRect();
-
-      const centerX = viewport.scrollLeft + rect.width / 2;
-      const centerY = viewport.scrollTop + rect.height / 2;
-
-      const contentXBeforeZoom = centerX / oldScale;
-      const contentYBeforeZoom = centerY / oldScale;
-
-      scale = nextScale;
-      applyZoom();
-
-      viewport.scrollLeft = contentXBeforeZoom * nextScale - rect.width / 2;
-      viewport.scrollTop = contentYBeforeZoom * nextScale - rect.height / 2;
-    }
-
-    function reset() {
-      scale = initialZoom;
-      applyZoom();
-
-      viewport.scrollLeft = 0;
-      viewport.scrollTop = 0;
-    }
-
-    viewport.addEventListener("pointerdown", (event) => {
+    stage.addEventListener("pointerdown", (e) => {
+      // only primary button
+      if (e.button !== 0) return;
       dragging = true;
-      lastX = event.clientX;
-      lastY = event.clientY;
-
-      viewport.classList.add("is-dragging");
-      viewport.setPointerCapture(event.pointerId);
+      ox = e.clientX - tx;
+      oy = e.clientY - ty;
+      stage.setPointerCapture(e.pointerId);
+      stage.classList.add("is-dragging");
     });
 
-    viewport.addEventListener("pointermove", (event) => {
+    stage.addEventListener("pointermove", (e) => {
       if (!dragging) return;
-
-      const dx = event.clientX - lastX;
-      const dy = event.clientY - lastY;
-
-      viewport.scrollLeft -= dx;
-      viewport.scrollTop -= dy;
-
-      lastX = event.clientX;
-      lastY = event.clientY;
+      tx = e.clientX - ox;
+      ty = e.clientY - oy;
+      applyTransform();
     });
 
-    function stopDragging(event) {
+    const stopDrag = () => {
       dragging = false;
-      viewport.classList.remove("is-dragging");
+      stage.classList.remove("is-dragging");
+    };
+    stage.addEventListener("pointerup",     stopDrag);
+    stage.addEventListener("pointercancel", stopDrag);
 
-      if (viewport.hasPointerCapture(event.pointerId)) {
-        viewport.releasePointerCapture(event.pointerId);
-      }
-    }
+    // ── zoom (wheel) ─────────────────────────────────────────────────
+    stage.addEventListener("wheel", (e) => {
+      e.preventDefault();
+      const rect   = stage.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
 
-    viewport.addEventListener("pointerup", stopDragging);
-    viewport.addEventListener("pointercancel", stopDragging);
+      const delta    = e.deltaY < 0 ? 1 + STEP : 1 - STEP;
+      const newScale = clampScale(scale * delta);
+      const ratio    = newScale / scale;
 
-    viewport.addEventListener("lostpointercapture", () => {
-      dragging = false;
-      viewport.classList.remove("is-dragging");
+      // zoom towards the cursor
+      tx = mouseX - ratio * (mouseX - tx);
+      ty = mouseY - ratio * (mouseY - ty);
+      scale = newScale;
+      applyTransform();
+    }, { passive: false });
+
+    // ── zoom buttons ─────────────────────────────────────────────────
+    root.querySelectorAll<HTMLButtonElement>("[data-zoom]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const action = btn.dataset.zoom;
+
+        if (action === "reset") {
+          scale = 1;
+          centerContent(); // also resets tx/ty
+          return;
+        }
+
+        // zoom toward stage centre
+        const cx = stage.offsetWidth  / 2;
+        const cy = stage.offsetHeight / 2;
+        const newScale = clampScale(scale * (action === "in" ? 1 + STEP : 1 - STEP));
+        const ratio    = newScale / scale;
+        tx = cx - ratio * (cx - tx);
+        ty = cy - ratio * (cy - ty);
+        scale = newScale;
+        applyTransform();
+      });
     });
-
-    root.querySelector('[data-action="zoom-in"]')?.addEventListener("click", () => {
-      zoomAtViewportCenter(zoomFactor);
-    });
-
-    root.querySelector('[data-action="zoom-out"]')?.addEventListener("click", () => {
-      zoomAtViewportCenter(1 / zoomFactor);
-    });
-
-    root.querySelector('[data-action="reset"]')?.addEventListener("click", reset);
-
-    applyZoom();
-  }
+  });
 </script>
