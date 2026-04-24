@@ -17,26 +17,20 @@
   <!-- controls -->
   <div class="pan-controls" aria-label="Zoom controls">
     <button class="pan-btn" data-zoom="in"  aria-label="Zoom in">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-        <circle cx="6.5" cy="6.5" r="5"/>
-        <line x1="10.5" y1="10.5" x2="14.5" y2="14.5"/>
-        <line x1="6.5" y1="4" x2="6.5" y2="9"/>
-        <line x1="4" y1="6.5" x2="9" y2="6.5"/>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607ZM10.5 7.5v6m3-3h-6" />
       </svg>
     </button>
     <hr class="pan-divider" />
     <button class="pan-btn" data-zoom="reset" aria-label="Reset view">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M2 8a6 6 0 1 0 1.5-3.9"/>
-        <polyline points="2 3 2 8 7 8"/>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
       </svg>
     </button>
     <hr class="pan-divider" />
     <button class="pan-btn" data-zoom="out" aria-label="Zoom out">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-        <circle cx="6.5" cy="6.5" r="5"/>
-        <line x1="10.5" y1="10.5" x2="14.5" y2="14.5"/>
-        <line x1="4" y1="6.5" x2="9" y2="6.5"/>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607ZM13.5 10.5h-6" />
       </svg>
     </button>
   </div>
@@ -97,8 +91,8 @@
     right: 16px;
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    padding: 4px;
+    gap: 0px;
+    padding: 3px;
     background: color-mix(in srgb, var(--sl-color-bg, #fff) 80%, transparent);
     backdrop-filter: blur(10px) saturate(160%);
     -webkit-backdrop-filter: blur(10px) saturate(160%);
@@ -115,7 +109,7 @@
     justify-content: center;
     width: 32px;
     height: 32px;
-    padding: 0;
+    padding: 0.3rem;
     background: transparent;
     border: none;
     border-radius: 7px;
@@ -133,16 +127,11 @@
     transform: scale(0.88);
   }
 
-  .pan-btn svg {
-    width: 15px;
-    height: 15px;
-  }
-
   .pan-divider {
     all: unset;
     display: block;
     height: 1px;
-    margin: 2px 4px;
+    margin: 0;
     background: color-mix(in srgb, currentColor 14%, transparent);
   }</style>
 
@@ -156,7 +145,7 @@
     let tx = 0, ty = 0, scale = 1;
     const STEP    = 0.2;
     const MIN     = 0.2;
-    const MAX     = 4;
+    const MAX     = 7;
 
     // ── helpers ──────────────────────────────────────────────────────
     function clampScale(s: number) {
