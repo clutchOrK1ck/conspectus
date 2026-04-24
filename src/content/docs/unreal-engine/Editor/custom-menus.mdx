@@ -1,0 +1,45 @@
+---
+title: Custom menus
+---
+
+import WIP from '/src/components/WIP.astro';
+import Pannable from '/src/components/Pannable.astro';
+
+This section describes how to build custom editor menus.
+
+## Menu builders and commands
+
+<WIP/>
+
+<Pannable initialZoom={3}>
+```mermaid
+classDiagram
+    class FUICommandsList {
+        +MapAction(FUICommandInfo*, FExecuteAction, FCanExecuteAction)
+        +Append(FUICommandList&)
+        +UnmapAction(FUICommandInfo*)
+        +IsActionMapped(FUICommandInfo*) bool
+        +ExecuteAction(FUICommandInfo*) bool
+        +CanExecuteAction(FUICommandInfo*) bool
+    }
+
+    class FBindingContext {
+        +FBindingContext(ContextName, Description, FName Parent, FName StyleSet)
+        NewCommand (CommandName, CommandLabel, CommandDescription) FUICommandInfoDecl
+    }
+
+    class TCommands {
+        +Register()
+        +Unregsiter()
+    }
+
+    class FUICommandInfo {
+        +MakeCommandInfo(FBindingContext&, FUICommandInfo& OutCommand, CommandName, CommandLabel, Description, Icon, ActionType, InputChord) static
+    }
+    
+%% RELATIONSHIPS
+TCommands --> FBindingContext
+```
+</Pannable>
+
+

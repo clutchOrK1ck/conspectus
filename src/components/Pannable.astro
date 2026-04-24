@@ -1,0 +1,224 @@
+---
+type Props = {
+  height?: string;
+  initialZoom?: number;
+  minZoom?: number;
+  maxZoom?: number;
+  zoomFactor?: number;
+};
+
+const {
+  height = "520px",
+  initialZoom = 1,
+  minZoom = 0.25,
+  maxZoom = 5,
+  zoomFactor = 1.2,
+} = Astro.props;
+
+const id = `pannable-${crypto.randomUUID()}`;
+---
+
+<div
+  id={id}
+  class="pannable"
+  style={`--pannable-height: ${height};`}
+  data-initial-zoom={initialZoom}
+  data-min-zoom={minZoom}
+  data-max-zoom={maxZoom}
+  data-zoom-factor={zoomFactor}
+>
+  <div class="pannable-viewport">
+    <div class="pannable-content">
+      <slot />
+    </div>
+  </div>
+
+  <div class="pannable-controls" aria-label="Zoom controls">
+    <button type="button" data-action="zoom-out" aria-label="Zoom out">−</button>
+    <button type="button" data-action="reset" aria-label="Reset zoom">Reset</button>
+    <button type="button" data-action="zoom-in" aria-label="Zoom in">+</button>
+  </div>
+</div>
+
+<style>
+  .pannable {
+    position: relative;
+    margin: 1.25rem 0;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background: var(--sl-color-bg);
+  }
+
+  .pannable-viewport {
+    height: var(--pannable-height);
+    overflow: auto;
+    cursor: grab;
+    touch-action: none;
+    scrollbar-width: none;
+  }
+
+  .pannable-viewport::-webkit-scrollbar {
+    display: none;
+  }
+
+  .pannable-viewport.is-dragging {
+    cursor: grabbing;
+  }
+
+  .pannable-content {
+    display: inline-block;
+    width: max-content;
+    min-width: 100%;
+    padding: 1rem;
+    user-select: none;
+  }
+
+  .pannable-content :global(.mermaid) {
+    display: inline-block;
+    max-width: none !important;
+  }
+
+  .pannable-content :global(svg),
+  .pannable-content :global(.mermaid svg) {
+    max-width: none !important;
+  }
+
+  .pannable-controls {
+    position: absolute;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    z-index: 10;
+
+    display: flex;
+    gap: 0.25rem;
+    padding: 0.4rem;
+
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.5rem;
+    background: color-mix(in srgb, var(--sl-color-gray-6), transparent 8%);
+    box-shadow: 0 0.5rem 1.5rem rgb(0 0 0 / 0.22);
+  }
+
+  .pannable-controls button {
+    font: inherit;
+    padding: 0.2rem 0.5rem;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.35rem;
+    background: var(--sl-color-gray-7);
+    color: var(--sl-color-white);
+    cursor: pointer;
+  }
+
+  .pannable-controls button:hover {
+    background: var(--sl-color-gray-5);
+  }
+</style>
+
+<script is:inline define:vars={{ id }}>
+  const root = document.getElementById(id);
+
+  if (root) {
+    const viewport = root.querySelector(".pannable-viewport");
+    const content = root.querySelector(".pannable-content");
+
+    const initialZoom = Number(root.dataset.initialZoom ?? 1);
+    const minZoom = Number(root.dataset.minZoom ?? 0.25);
+    const maxZoom = Number(root.dataset.maxZoom ?? 5);
+    const zoomFactor = Number(root.dataset.zoomFactor ?? 1.2);
+
+    let scale = initialZoom;
+
+    let dragging = false;
+    let lastX = 0;
+    let lastY = 0;
+
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    function applyZoom() {
+      content.style.zoom = String(scale);
+    }
+
+    function zoomAtViewportCenter(factor) {
+      const oldScale = scale;
+      const nextScale = clamp(scale * factor, minZoom, maxZoom);
+
+      if (nextScale === oldScale) return;
+
+      const rect = viewport.getBoundingClientRect();
+
+      const centerX = viewport.scrollLeft + rect.width / 2;
+      const centerY = viewport.scrollTop + rect.height / 2;
+
+      const contentXBeforeZoom = centerX / oldScale;
+      const contentYBeforeZoom = centerY / oldScale;
+
+      scale = nextScale;
+      applyZoom();
+
+      viewport.scrollLeft = contentXBeforeZoom * nextScale - rect.width / 2;
+      viewport.scrollTop = contentYBeforeZoom * nextScale - rect.height / 2;
+    }
+
+    function reset() {
+      scale = initialZoom;
+      applyZoom();
+
+      viewport.scrollLeft = 0;
+      viewport.scrollTop = 0;
+    }
+
+    viewport.addEventListener("pointerdown", (event) => {
+      dragging = true;
+      lastX = event.clientX;
+      lastY = event.clientY;
+
+      viewport.classList.add("is-dragging");
+      viewport.setPointerCapture(event.pointerId);
+    });
+
+    viewport.addEventListener("pointermove", (event) => {
+      if (!dragging) return;
+
+      const dx = event.clientX - lastX;
+      const dy = event.clientY - lastY;
+
+      viewport.scrollLeft -= dx;
+      viewport.scrollTop -= dy;
+
+      lastX = event.clientX;
+      lastY = event.clientY;
+    });
+
+    function stopDragging(event) {
+      dragging = false;
+      viewport.classList.remove("is-dragging");
+
+      if (viewport.hasPointerCapture(event.pointerId)) {
+        viewport.releasePointerCapture(event.pointerId);
+      }
+    }
+
+    viewport.addEventListener("pointerup", stopDragging);
+    viewport.addEventListener("pointercancel", stopDragging);
+
+    viewport.addEventListener("lostpointercapture", () => {
+      dragging = false;
+      viewport.classList.remove("is-dragging");
+    });
+
+    root.querySelector('[data-action="zoom-in"]')?.addEventListener("click", () => {
+      zoomAtViewportCenter(zoomFactor);
+    });
+
+    root.querySelector('[data-action="zoom-out"]')?.addEventListener("click", () => {
+      zoomAtViewportCenter(1 / zoomFactor);
+    });
+
+    root.querySelector('[data-action="reset"]')?.addEventListener("click", reset);
+
+    applyZoom();
+  }
+</script>

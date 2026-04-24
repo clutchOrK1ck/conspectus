@@ -32,8 +32,39 @@ Creating custom asset classes usually means adding *runtime support* (`UObject`s
 Asset actions like creation, import/export, duplication, and context actions applicable to selected assets, are managed by the AssetTools singleton, available from the `AssetToolsModule`. The singleton provides many Blueprint-callable asset actions and registers new aset types and actions applicable to the asset types. For example, registering asset actions and new asset category for a custom asset in the module startup:
 
 ```cpp
-void MyModule::StartupModule() {
-    // get the asset tools module
+class FMyModule : public IModuleInterface {
+    TSharedPtr<FCustomActionsClass> CustomActionsSingleton;
 
+public:
+    virtual void StartupModule() override;
+    virtual void ShutdownModule() override;
+}
+
+void FMyModule::StartupModule() {
+    // get the asset tools module
+    IAssetTools& AssetTools = FAssetToolsModule::GetModule().Get();
+
+    // registering a new advanced asset category will return the new category's id
+    uint32 AssetCategoryId = AssetTools.RegisterAdvancedAssetCategory(
+        FName{"NewCategoryKey"},
+        FText::FromString("New Category Title")
+    );
+
+    // register the actions class (we pass the category id on to it)
+    CustomActionsSingleton = MakeShared<FCustomActionsClass>(AssetCategoryId);
+    AssetTools.RegisterAssetTypeActions(CustomActionsSingleton.ToSharedRef());
+}
+
+void FMyModule::ShutdownModule() {
+    // unregsitering the custom actions
+    if (!FModuleManager::Get().IsModuleLoaded("AssetTools")) return;
+    FAssetToolsModule::GetModule().Get().UnregisterAssetTypeActions(CustomActionsSingleton.ToSharedRef());
 }
 ```
+
+`FCustomActionsClass` must implement `IAssetTypeActions` (you can extend the helper class `FAssetTypeActions_Base` though). It decides multiple things regarding asset behavior in editor:
+- coloration of the asset's icon (`GetTypeColor()`)
+- menu that appears on the right-click on the asset (`GetActions(...)`)
+- which asset editor will open when double-clicking the asset (`OpenAssetEditor(...)`)
+- which actions can be performed on the asset (`CanRename(), CanDuplicate(), CanFilter(), CanLocalize(), CanMerge()` etc.)
+- asset's thumbnail (`GetThumbnailInfo(), GetThumbnailOverlay(), GetThumbnailBrush(), GetIconBrush()` etc.)
